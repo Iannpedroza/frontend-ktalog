@@ -2,7 +2,7 @@ import React, { useState, useContext} from "react";
 
 import Header from "../../components/NewHeader";
 import Footer from "../../components/Footer";
-import axios from 'axios'
+import api from "../../services/api"
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -66,7 +66,7 @@ export default function Settings({ history }) {
 
   useEffect(() => {
 		const initialUserLogged = JSON.parse(window.localStorage.getItem('userLogged'));
-    axios.post('http://localhost:5000/users/getById', {
+    api.post('users/getById', {
 			id: userLogged.id || initialUserLogged.id
     })
       .then(res => {
@@ -85,7 +85,7 @@ export default function Settings({ history }) {
         }
       })
 
-    axios.post('http://localhost:5000/service/getByUserId', {
+    api.post('service/getByUserId', {
       userId: userLogged.id || initialUserLogged.id
     })
       .then(res => {
@@ -145,7 +145,7 @@ export default function Settings({ history }) {
   function handleChangeInfo() {
     if (name != oldObject.name || lastName != oldObject.lastName || email != oldObject.email /*||  avatar != oldObject.avatar */) {
       const initialUserLogged = JSON.parse(window.localStorage.getItem('userLogged'));
-      axios.post('http://localhost:5000/users/updateInfo', {
+      api.post('users/updateInfo', {
         id: userLogged.id || initialUserLogged.id,
         name: name,
         lastName: lastName,

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../UserContext'
-import axios from 'axios'
+import api from "../../services/api"
 import Footer from '../../components/Footer'
 import NewHeader from '../../components/NewHeader'
 import {
@@ -50,7 +50,7 @@ export default function Home({ history }) {
   }
 
   useEffect(() => {
-    axios.get('http://localhost:5000/service/topServices').then(res => {
+    api.get('service/topServices').then(res => {
       if (res.data) {
         const auxData = res.data;
         let services = []
@@ -134,7 +134,7 @@ export default function Home({ history }) {
                             service.image ? (
                               <CardMedia
                                 className={styles.cardMedia}
-                                src={"http://localhost:5000/" + service.image} 
+                                src={process.env.REACT_APP_API_URL + service.image} 
                                 component="img"
                                 title="Image title"
                               />

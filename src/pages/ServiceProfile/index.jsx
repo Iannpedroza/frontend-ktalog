@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 
 import NewHeader from '../../components/NewHeader'
 import Footer from '../../components/Footer'
-import axios from 'axios'
+import api from "../../services/api"
 import {
   Grid, CssBaseline, Container, Typography, Paper, Button, Avatar,
   Accordion, AccordionSummary, AccordionDetails, Divider, List, ListItem,
@@ -64,7 +64,7 @@ export default function ServiceProfile({ history }) {
 
   useEffect(() => {
     
-    axios.post('http://localhost:5000/service/getById',{id: localStorage.getItem('idService')})
+    api.post('service/getById',{id: localStorage.getItem('idService')})
       .then(res => {
         if (!res.data.error) {
           let data = res.data;
@@ -229,14 +229,14 @@ export default function ServiceProfile({ history }) {
         user: userLogged.id || initialUserLogged.id,
         totalRating: ((costBenefit + quality + attendance) / 3)
       };
-      axios.post('http://localhost:5000/service/getById',{id: localStorage.getItem('idService')})
+      api.post('service/getById',{id: localStorage.getItem('idService')})
       .then(res => {
         if (!res.data.error) {
           let allRatings = res.data.rating;
           if (true == false /* allRatings.find(el => el.user == userLoggedId) */) {
           } else {
             console.log(ratingAux);
-            axios.post('http://localhost:5000/service/insertRating', {id: localStorage.getItem('idService'), ratingAux})
+            api.post('service/insertRating', {id: localStorage.getItem('idService'), ratingAux})
               .then(res => {
                 setRating(res.data.averageRating)
                 let array = res.data.rating;
@@ -406,7 +406,7 @@ export default function ServiceProfile({ history }) {
                   </Typography>
                   {
                     image ? (
-                      <Avatar src={"http://localhost:5000/" + image}  className={styles.sizeAvatar} />
+                      <Avatar src={process.env.REACT_APP_API_URL + image}  className={styles.sizeAvatar} />
                     ) : (
                       <Avatar className={styles.sizeAvatar} />
                     )
@@ -504,7 +504,7 @@ export default function ServiceProfile({ history }) {
                           <ListItemAvatar>
                             {
                               rating.user.avatar ?
-                              <Avatar src={"http://localhost:5000/" + rating.user.avatar}/>
+                              <Avatar src={process.env.REACT_APP_API_URL + rating.user.avatar}/>
                               : 
                               <Avatar/>
                             }

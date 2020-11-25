@@ -2,10 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { UserContext } from "../../UserContext";
 import InputMask from "react-input-mask";
-import axios from "axios";
+import api from "../../services/api"
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
-
+import axios from 'axios';
 import {
   Grid,
   TextField,
@@ -142,7 +142,7 @@ export default function ServiceDetails() {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/category/").then((res) => {
+    api.get("category/").then((res) => {
       const aux = res.data;
       if (serviceType == 1) {
         var reduced = aux.reduce(function (filtered, option) {

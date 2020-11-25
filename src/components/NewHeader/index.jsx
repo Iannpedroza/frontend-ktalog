@@ -130,7 +130,7 @@ function NewHeader(props) {
               >
                 {
                   initialUserLogged.avatar ? 
-                  <Avatar src={"http://localhost:5000/" + initialUserLogged.avatar}/>
+                  <Avatar src={process.env.REACT_APP_API_URL + initialUserLogged.avatar}/>
                   :
                   <AccountCircle color='inherit' />
                 }

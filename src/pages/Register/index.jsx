@@ -4,7 +4,7 @@ import NewHeader from '../../components/NewHeader'
 
 import Footer from '../../components/Footer'
 
-import axios from 'axios'
+import api from "../../services/api"
 
 import {
   TextField, IconButton, InputAdornment, Button, Paper, Container,
@@ -74,8 +74,8 @@ export default function Register({ history }) {
           password: values.password,
           avatar: avatar
         }
-        return axios
-          .post('http://localhost:5000/users/register', fd)
+        return api
+          .post('users/register', fd)
           .then(response => {
             console.log(response.data);
             history.push('/login')

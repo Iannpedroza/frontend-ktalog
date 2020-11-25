@@ -3,7 +3,7 @@ import FacebookLogin from 'react-facebook-login';
 import Footer from '../../components/Footer'
 import NewHeader from '../../components/NewHeader'
 import { UserContext } from '../../UserContext'
-import axios from 'axios'
+import api from "../../services/api"
 
 import {
     TextField, IconButton, InputAdornment, Button, Paper, Container,
@@ -48,8 +48,8 @@ export default function Login({ history }) {
 
   const responseFacebook = (response) => {
       console.log(response);
-      return axios
-        .post('http://localhost:5000/users/fblogin', {
+      return api
+        .post('users/fblogin', {
             accessToken: response.accessToken,
             userID: response.userID
         })
@@ -63,8 +63,8 @@ export default function Login({ history }) {
 
   async function handleLogin() {
     try {
-        return axios
-          .post('http://localhost:5000/users/login', {
+        return api
+          .post('users/login', {
             email: email,
             password: values.password
           })

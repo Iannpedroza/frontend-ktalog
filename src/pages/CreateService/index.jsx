@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { UserContext } from '../../UserContext'
 import ServiceTypeInformation from '../../components/ServiceTypeInformation'
-import axios from 'axios'
+import api from "../../services/api"
 import { serialize } from 'object-to-formdata';
 import ServiceDetails from '../../components/ServiceDetails'
 
@@ -182,7 +182,7 @@ export default function CreateService() {
         const formData = serialize(objectToCreate);
 
         console.log(formData);
-        axios.post('http://localhost:5000/service/register', formData)
+        api.post('service/register', formData)
             .then(service => {
                 if (service) {
                     console.log("serviço criado" + JSON.stringify(service))

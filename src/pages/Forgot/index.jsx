@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import api from "../../services/api"
 import Footer from '../../components/Footer'
 import NewHeader from '../../components/NewHeader'
 import {
@@ -27,8 +27,8 @@ export default function Forgot({ history }) {
       }
       if (email === confirmEmail) {
         alert("Você receberá em email para definir uma nova senha")
-        return axios
-          .put('http://localhost:5000/users/forgot-password', {
+        return api
+          .put('users/forgot-password', {
               email: email
           })
           .then(response => {

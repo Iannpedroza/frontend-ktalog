@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../UserContext";
-import axios from "axios";
+import api from "../../services/api"
 import {useLocation} from 'react-router-dom'
+import axios from 'axios';
 
 import Footer from "../../components/Footer";
 
@@ -87,7 +88,7 @@ export default function Search({ history }) {
   }
 
   useEffect(() => {
-    axios.get("http://localhost:5000/category/").then((res) => {
+    api.get("category/").then((res) => {
       const aux = res.data;
       if (location.pathname === "/establishments") {
         var reduced = aux.reduce(function (filtered, option) {
