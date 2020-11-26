@@ -145,7 +145,7 @@ export default function Services({ history }) {
                         {service.image ? (
                           <CardMedia
                             className={styles.cardMedia}
-                            src={process.env.REACT_APP_API_URL + service.image}
+                            src={process.env.REACT_APP_API_IMAGES_URL + service.image}
                             component="img"
                             title="Image title"
                           />

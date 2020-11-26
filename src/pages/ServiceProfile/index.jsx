@@ -487,7 +487,7 @@ export default function ServiceProfile({ history }) {
                   </Typography>
                   {image ? (
                     <Avatar
-                      src={process.env.REACT_APP_API_URL + image}
+                      src={process.env.REACT_APP_API_IMAGES_URL + image}
                       className={styles.sizeAvatar}
                     />
                   ) : (
@@ -614,7 +614,7 @@ export default function ServiceProfile({ history }) {
                             {rating.user.avatar ? (
                               <Avatar
                                 src={
-                                  process.env.REACT_APP_API_URL +
+                                  process.env.REACT_APP_API_IMAGES_URL +
                                   rating.user.avatar
                                 }
                               />
