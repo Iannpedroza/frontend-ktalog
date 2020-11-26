@@ -36,8 +36,10 @@ function App() {
   const [topServices, setTopServices] = useState('')
   const [averagePrice, setAveragePrice] = useState('')
   const [serviceImage, setServiceImage] = useState('')
-  
+  const [searchClicked, setSearchClicked] = useState(0)
+  const [nameSearch, setNameSearch] = useState('')
   const [productItems, setProductItems] = useState([]);
+  const [selectedSort, setSelectedSort] = useState({key: "-avgRating", name: "Avaliação geral"});
   const [scheduleItems, setScheduleItems] = useState([
     { week_day: 0, from: "", to: "" },
   ]);
@@ -46,7 +48,7 @@ function App() {
     description, setDescription, street, setStreet, streetNumber, setStreetNumber, neighbour, setNeighbour, selectedUf, setSelectedUf, city, 
     setCity ,cep, setCEP, phone, setPhone, cpf, setCpf, cnpj, setCnpj, category, setCategory, verificado, setVerificado, serviceType, setServiceType,
     topServices, setTopServices, userLogged, setUserLogged, averagePrice, setAveragePrice, serviceImage, setServiceImage, productItems, setProductItems,
-    scheduleItems, setScheduleItems
+    scheduleItems, setScheduleItems, searchClicked, setSearchClicked, nameSearch, setNameSearch, selectedSort, setSelectedSort
   }
   return (
     <Router>

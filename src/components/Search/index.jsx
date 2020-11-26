@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../UserContext";
-import api from "../../services/api"
-import {useLocation} from 'react-router-dom'
-import axios from 'axios';
+import api from "../../services/api";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 import Footer from "../../components/Footer";
 
@@ -41,16 +41,50 @@ export default function Search({ history }) {
   const [ufs, setUfs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [nameSearch, setNameSearch] = useState('')
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("Avaliação geral")
+  
+  const [selectedRatingFilter, setSelectedRatingFilter] = useState({key: 0,name: "Qualquer"})
   const sortValues = [
-    "Avaliação geral",
-    "Atendimento",
-    "Custo-benefício",
-    "Qualidade",
-    "Ordem alfabética",
-  ]
+    {
+      key: "-averageRating",
+      name: "Avaliação geral"
+    },
+    {
+      key: "attendance",
+      name: "Atendimento"
+    },
+    {
+      key: "costBenefit",
+      name: "Custo-benefício"
+    },
+    {
+      key: "quality",
+      name: "Qualidade"
+    },
+    {
+      key: "-name",
+      name: "Ordem alfabética"
+    }
+  ];
+
+  const ratingsFilter = [
+    {
+      key: 0,
+      name: "Qualquer"
+    },
+    {
+      key: 1,
+      name: "Acima de 4 estrelas"
+    },
+    {
+      key: 2,
+      name: "Acima de 3 estrelas"
+    },
+    {
+      key: 3,
+      name: "Acima de 2 estrelas"
+    },
+  ];
   const {
     //price, setPrice,
     rating,
@@ -60,7 +94,9 @@ export default function Search({ history }) {
     speciality,
     globalLocation,
     globalSpeciality,
-    //date, setDate
+    searchClicked, setSearchClicked,
+    nameSearch, setNameSearch,
+    selectedSort, setSelectedSort
   } = useContext(UserContext);
   //localStorage.setItem("price", price)
 
@@ -80,9 +116,9 @@ export default function Search({ history }) {
 
     let comparison = 0;
     if (nameA > nameB) {
-    comparison = 1;
+      comparison = 1;
     } else if (nameA < nameB) {
-    comparison = -1;
+      comparison = -1;
     }
     return comparison;
   }
@@ -93,22 +129,22 @@ export default function Search({ history }) {
       if (location.pathname === "/establishments") {
         var reduced = aux.reduce(function (filtered, option) {
           if (option.establishment) {
-            filtered.push(option.name);
+            filtered.push({name: option.name, id: option._id});
           }
           return filtered;
         }, []);
       } else if (location.pathname === "/services") {
         var reduced = aux.reduce(function (filtered, option) {
           if (!option.establishment) {
-            filtered.push(option.name);
+            filtered.push({name: option.name, id: option._id});
           }
           return filtered;
         }, []);
       }
-      reduced.sort();
+      reduced.sort(compare);
       setCategories(reduced || []);
     });
-  }, []); 
+  }, []);
 
   // Busca os médicos de acordo com a pesquisa na tela inicial
   /*  useEffect(() => {
@@ -158,7 +194,8 @@ export default function Search({ history }) {
 
   // Busca os médicos de acordo com a pesquisa avançada na tela de busca
   const handleAdvancedSearch = () => {
-    console.log(selectedCategories)
+    setSearchClicked(searchClicked + 1);
+    console.log(selectedRatingFilter);
     /* if (location === "" || speciality === "" || rating === 0) {
       setOpenDialog(true)
     } else {
@@ -184,7 +221,9 @@ export default function Search({ history }) {
         })
     } */
   };
-
+  
+  const handleUndoAdvancedSearch = () => {
+  }
   return (
     <React.Fragment>
       <Grid container className={styles.mainGrid}>
@@ -224,13 +263,15 @@ export default function Search({ history }) {
                         fullWidth
                         multiple
                         options={categories}
-                        getOptionLabel={(category) => category}
+                        getOptionLabel={(category) => category.name}
                         filterSelectedOptions
                         value={selectedCategories}
-                        onChange={(event, value) => setSelectedCategories(value)}
+                        onChange={(event, value) =>
+                          setSelectedCategories(value)
+                        }
                         renderInput={(params) => (
                           <TextField
-                          fullWidth
+                            fullWidth
                             {...params}
                             label="Categorias"
                             variant="outlined"
@@ -239,39 +280,39 @@ export default function Search({ history }) {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                    <Autocomplete
+                      <Autocomplete
                         fullWidth
-                        options={sortValues}
-                        getOptionLabel={(sort) => sort}
+                        options={ratingsFilter}
+                        getOptionLabel={(ratingFilter) => ratingFilter.name}
                         filterSelectedOptions
-                        value={selectedSort}
-                        onChange={(event, value) => setSelectedSort(value)}
+                        value={selectedRatingFilter}
+                        onChange={(event, value) =>
+                          value != null ? setSelectedRatingFilter(value) : null
+                        }
                         renderInput={(params) => (
                           <TextField
-                          fullWidth
+                            fullWidth
                             {...params}
-                            label="Ordenar por:"
+                            label="Avaliação geral"
                             variant="outlined"
                           />
                         )}
                       />
                     </Grid>
 
-                    <Grid item xs={12} sm={4}>
-                     <Autocomplete
+                    <Grid item xs={12} sm={6}>
+                      <Autocomplete
                         fullWidth
-                        multiple
-                        id="autocomplete1"
-                        options={categories}
-                        getOptionLabel={(category) => category}
+                        options={sortValues}
+                        getOptionLabel={(sort) => sort.name}
                         filterSelectedOptions
-                        value={selectedCategories}
-                        onChange={(event, value) => setSelectedCategories(value)}
+                        value={selectedSort}
+                        onChange={(event, value) => value != null ? setSelectedSort(value) : null}
                         renderInput={(params) => (
                           <TextField
-                          fullWidth
+                            fullWidth
                             {...params}
-                            label="Categorias"
+                            label="Ordenar por:"
                             variant="outlined"
                           />
                         )}
@@ -281,57 +322,23 @@ export default function Search({ history }) {
                 </ExpansionPanelDetails>
                 <div className={styles.buttons}>
                   <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAdvancedSearch}
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleUndoAdvancedSearch}
                     className={styles.button}
+                  >
+                    Desfazer busca
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    onClick={handleAdvancedSearch}
+                    className={styles.buttonSearch}
                   >
                     Buscar
                   </Button>
                 </div>
               </ExpansionPanel>
-              {doctors.length === 0 && (
-                <Alert severity="warning" variant="standard" elevation={3}>
-                  <AlertTitle>Atenção</AlertTitle>
-                  Essa pesquisa não retornou nenhum resultado!
-                </Alert>
-              )}
-            </Container>
-            <Container className={styles.cardGrid} maxWidth="md">
-              {doctors.length !== 0 && (
-                <Grid container spacing={4}>
-                  {doctors.map((doc) => (
-                    <Grid item key={doc.key} xs={12} sm={6} md={4}>
-                      <Card className={styles.card} elevation={3}>
-                        <CardMedia
-                          className={styles.cardMedia}
-                          image={doc.image}
-                          title="Image title"
-                        />
-                        <CardContent className={styles.cardContent}>
-                          <Typography gutterBottom variant="h5" component="h2">
-                            {doc.name}
-                          </Typography>
-                          <Typography>{doc.description}</Typography>
-                          <Grid className={styles.rating}>
-                            <Chip icon={<StarRate />} label={doc.rating} />
-                          </Grid>
-                        </CardContent>
-                        <CardActions>
-                          <Button
-                            size="small"
-                            color="primary"
-                            onClick={() => history.push(`/doctor/${doc.key}`)}
-                            className={styles.details}
-                          >
-                            Ver Detalhes
-                          </Button>
-                        </CardActions>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              )}
             </Container>
           </Grid>
         </Grid>
@@ -343,7 +350,6 @@ export default function Search({ history }) {
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     backgroundColor: "#e4fdff",
-    minHeight: "100vh",
   },
   expansionGrid: {
     paddingBottom: theme.spacing(2),
@@ -353,10 +359,6 @@ const useStyles = makeStyles((theme) => ({
   },
   details: {
     justifyContent: "flex-end",
-  },
-  cardGrid: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(8),
   },
   card: {
     height: "100%",
@@ -371,6 +373,12 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     marginRight: theme.spacing(3),
   },
+  buttonSearch: {
+    marginBottom: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    color: '#fff',
+    backgroundColor: '#080b57'
+  },
   cardMedia: {
     paddingTop: "56.25%",
   },
@@ -380,19 +388,6 @@ const useStyles = makeStyles((theme) => ({
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
-  },
-  mainContainer: {
-    padding: theme.spacing(8, 0, 6),
-  },
-  resultContainer: {
-    paddingTop: theme.spacing(20),
-  },
-  resultTypography: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    fontWeight: "bold",
   },
   mainTitle: {
     fontWeight: "bold",
