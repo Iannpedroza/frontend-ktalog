@@ -1,11 +1,11 @@
-import React, { useState, useContext} from "react";
+import React, { useState, useContext } from "react";
 
 import Header from "../../components/NewHeader";
 import Footer from "../../components/Footer";
-import api from "../../services/api"
+import api from "../../services/api";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import {
   Grid,
   Container,
@@ -37,7 +37,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import SaveIcon from "@material-ui/icons/Save";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { UserContext } from '../../UserContext'
+import { UserContext } from "../../UserContext";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { useEffect } from "react";
@@ -48,15 +48,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Settings({ history }) {
   const styles = useStyles();
-  const [openDialog, setOpenDialog] = useState(false);
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
-	const { userLogged, setUserLogged } = useContext(UserContext)
+  const { userLogged, setUserLogged } = useContext(UserContext);
   const [myServices, setMyServices] = useState([]);
-	const [name, setName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-	//const [avatar, setAvatar] = useState('')
-	const [oldObject, setOldObject] = useState('')
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  //const [avatar, setAvatar] = useState('')
+  const [oldObject, setOldObject] = useState("");
   const [values, setValues] = useState({
     password: "",
     confirmPassword: "",
@@ -65,42 +64,55 @@ export default function Settings({ history }) {
   });
 
   useEffect(() => {
-		const initialUserLogged = JSON.parse(window.localStorage.getItem('userLogged'));
-    api.post('users/getById', {
-			id: userLogged.id || initialUserLogged.id
-    })
-      .then(res => {
+    const initialUserLogged = JSON.parse(
+      window.localStorage.getItem("userLogged")
+    );
+    api.post("users/getById", {
+        id: userLogged.id || initialUserLogged.id,
+      })
+      .then((res) => {
         console.log(res);
         if (!res.data.error) {
-          setName(res.data.first_name)
-          setLastName(res.data.last_name)
+          setName(res.data.first_name);
+          setLastName(res.data.last_name);
           //setAvatar(res.data.avatar)
-          setEmail(res.data.email)
+          setEmail(res.data.email);
           setOldObject({
             name: res.data.first_name,
             lastName: res.data.last_name,
             //avatar: res.data.avatar,
-            email: res.data.email
-          })
+            email: res.data.email,
+          });
         }
-      })
+      });
 
-    api.post('service/getByUserId', {
-      userId: userLogged.id || initialUserLogged.id
-    })
-      .then(res => {
+    api
+      .post("service/getByUserId", {
+        userId: userLogged.id || initialUserLogged.id,
+      })
+      .then((res) => {
         if (!res.data.error) {
           setMyServices(res.data);
         }
-      })
-  }, [])
+      });
+  }, []);
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  function removeProduct() {
+  function editService() {}
 
+  function removeService(service) {
+    const serviceId = service._id;
+    api.post('service/delete', {serviceId: serviceId})
+      .then(res => {
+        if (!res.data.error) {
+          alert("Serviço deletado com sucesso");
+          let auxServices = myServices.slice();
+          setMyServices(auxServices.splice(auxServices.findIndex(el => el._id == serviceId), 1));
+        }
+      });
   }
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
@@ -118,16 +130,25 @@ export default function Settings({ history }) {
     event.preventDefault();
   };
 
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-
   const handleCloseDelete = () => {
     setOpenDialogDelete(false);
   };
 
   function handleAccept() {
-    //firebase.deleteUser()
+    console.log("teste");
+    const initialUserLogged = JSON.parse(
+      window.localStorage.getItem("userLogged")
+    );
+    api.post("users/delete", { userId: initialUserLogged.id }).then((res) => {
+      if (!res.data.error) {
+        alert("Conta deletada com sucesso");
+        window.localStorage.setItem("logged", "false");
+        window.localStorage.removeItem("userLogged");
+        history.push("/home");
+        
+      }
+    });
+    handleCloseDelete();
   }
 
   function handleDelete() {
@@ -138,48 +159,38 @@ export default function Settings({ history }) {
     if (values.password === values.confirmPassword) {
       //TODO
     } else {
-      setOpenDialog(true);
+      alert(
+        "As senhas digitadas nos campos se diferem. Por favor digite novamente."
+      );
     }
   }
 
   function handleChangeInfo() {
-    if (name != oldObject.name || lastName != oldObject.lastName || email != oldObject.email /*||  avatar != oldObject.avatar */) {
-      const initialUserLogged = JSON.parse(window.localStorage.getItem('userLogged'));
-      api.post('users/updateInfo', {
-        id: userLogged.id || initialUserLogged.id,
-        name: name,
-        lastName: lastName,
-        email: email,
-        //avatar: avatar
-      })
-        .then(res => {
-          console.log(res)
+    if (
+      name != oldObject.name ||
+      lastName != oldObject.lastName ||
+      email != oldObject.email /*||  avatar != oldObject.avatar */
+    ) {
+      const initialUserLogged = JSON.parse(
+        window.localStorage.getItem("userLogged")
+      );
+      api
+        .post("users/updateInfo", {
+          id: userLogged.id || initialUserLogged.id,
+          name: name,
+          lastName: lastName,
+          email: email,
+          //avatar: avatar
         })
+        .then((res) => {
+          console.log(res);
+        });
     }
   }
 
   return (
     <React.Fragment>
       <div>
-        <Dialog
-          open={openDialog}
-          onClose={handleClose}
-          keepMounted
-          TransitionComponent={Transition}
-        >
-          <DialogTitle>Atenção</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              As senhas digitadas nos campos se diferem. Por favor digite
-              novamente.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary" autoFocus>
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
         <Dialog
           open={openDialogDelete}
           onClose={handleCloseDelete}
@@ -189,7 +200,8 @@ export default function Settings({ history }) {
           <DialogTitle>Atenção</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Você realmente deseja deletar sua conta do Consulta Esperta?
+              Você realmente deseja deletar sua conta? Todos seus serviços serão
+              deletados também.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -273,8 +285,8 @@ export default function Settings({ history }) {
                     onChange={(event) => setLastName(event.target.value)}
                   />
                 </Grid>
-                
-								<Grid item xs={12} sm={6} >
+
+                <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     id="email"
@@ -294,7 +306,7 @@ export default function Settings({ history }) {
                     Salvar
                   </Button>
                 </Grid>
-                  
+
                 {/* <Grid item xs={12} sm={6} >
                   <input
                     accept="image/*"
@@ -315,7 +327,6 @@ export default function Settings({ history }) {
                     </IconButton>
                   </label>
                 </Grid> */}
-								
               </Grid>
 
               <Typography variant="h6" gutterBottom className={styles.title}>
@@ -441,13 +452,20 @@ export default function Settings({ history }) {
                                 secondary={service.category.name}
                               />
                             </Grid>
-                            
-                            <Grid container direction="row" justify="flex-end" alignItems="flex-end" >
-                              <IconButton onClick={() => removeProduct()}>
-                                <EditIcon className={styles.editButton}/>
+
+                            <Grid
+                              container
+                              direction="row"
+                              justify="flex-end"
+                              alignItems="flex-end"
+                            >
+                              <IconButton onClick={() => editService()}>
+                                <EditIcon className={styles.editButton} />
                               </IconButton>
-                              <IconButton onClick={() => removeProduct()}>
-                                <DeleteForeverIcon className={styles.deleteButton}/>
+                              <IconButton onClick={() => removeService(service)}>
+                                <DeleteForeverIcon
+                                  className={styles.deleteButton}
+                                />
                               </IconButton>
                             </Grid>
                           </ListItem>
@@ -527,16 +545,16 @@ const useStyles = makeStyles((theme) => ({
     display: "none",
   },
   servicesGrid: {
-    width: '100%',
-    justifyContent: "space-between"
+    width: "100%",
+    justifyContent: "space-between",
   },
   listItemText: {
-    width: '100%'
+    width: "100%",
   },
   deleteButton: {
-    color: '#f50057'
+    color: "#f50057",
   },
   editButton: {
-    color: '#0d6bde'
-  }
+    color: "#0d6bde",
+  },
 }));

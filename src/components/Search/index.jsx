@@ -40,10 +40,8 @@ export default function Search({ history }) {
   const [doctors, setDoctors] = useState([]);
   const [ufs, setUfs] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   
-  const [selectedRatingFilter, setSelectedRatingFilter] = useState({key: 0,name: "Qualquer"})
   const sortValues = [
     {
       key: "-averageRating",
@@ -62,7 +60,7 @@ export default function Search({ history }) {
       name: "Qualidade"
     },
     {
-      key: "-name",
+      key: "+name",
       name: "Ordem alfabética"
     }
   ];
@@ -73,17 +71,21 @@ export default function Search({ history }) {
       name: "Qualquer"
     },
     {
-      key: 1,
+      key: 4,
       name: "Acima de 4 estrelas"
     },
     {
-      key: 2,
+      key: 3,
       name: "Acima de 3 estrelas"
     },
     {
-      key: 3,
+      key: 2,
       name: "Acima de 2 estrelas"
     },
+    {
+      key: 1,
+      name: "Acima de 1 estrelas"
+    }
   ];
   const {
     //price, setPrice,
@@ -96,7 +98,10 @@ export default function Search({ history }) {
     globalSpeciality,
     searchClicked, setSearchClicked,
     nameSearch, setNameSearch,
-    selectedSort, setSelectedSort
+    selectedSort, setSelectedSort,
+    selectedCategories, setSelectedCategories,
+    selectedRatingFilter, setSelectedRatingFilter,
+    undoSearchClicked, setUndoSearchClicked
   } = useContext(UserContext);
   //localStorage.setItem("price", price)
 
@@ -176,53 +181,12 @@ export default function Search({ history }) {
       });
   }, []);
 
-  /*  useEffect(() => {
-    firebase.db.collection("specialities").orderBy("name")
-      .get().then(snapshot => {
-        if (snapshot) {
-          let specialities = []
-          snapshot.forEach(speciality => {
-            specialities.push({
-              ...speciality.data()
-            })
-          })
-          const specialityNames = specialities.map(speciality => speciality.name)
-          setSpecialities(specialityNames)
-        }
-      })
-  }, []) */
-
-  // Busca os médicos de acordo com a pesquisa avançada na tela de busca
   const handleAdvancedSearch = () => {
-    setSearchClicked(searchClicked + 1);
-    console.log(selectedRatingFilter);
-    /* if (location === "" || speciality === "" || rating === 0) {
-      setOpenDialog(true)
-    } else {
-      setFetchData(false)
-      firebase.db.collection('doctors')
-        .where("location", "==", location)
-        .where("speciality", "==", speciality)
-        //.where("price", "<=", price)
-        //.where("date", "==", date)
-        .where("rating", "==", rating)
-        .get().then(snapshot => {
-          if (snapshot) {
-            let doctors = []
-            snapshot.forEach(doctor => {
-              doctors.push({
-                key: doctor.id,
-                ...doctor.data()
-              })
-            })
-            setDoctors(doctors)
-            setFetchData(true)
-          }
-        })
-    } */
+    setSearchClicked(true);
   };
   
   const handleUndoAdvancedSearch = () => {
+    setUndoSearchClicked(true);
   }
   return (
     <React.Fragment>
