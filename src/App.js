@@ -17,6 +17,7 @@ import serviceProfile from "./pages/ServiceProfile"
 import Configuration from './pages/Configuration'
 import Establishments from './pages/Establishments'
 
+
 function App() {
   const [userLogged, setUserLogged] = useState('')
   const [street, setStreet] = useState('')
