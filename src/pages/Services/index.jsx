@@ -24,40 +24,83 @@ export default function Services({ history }) {
   const styles = useStyles();
   const [services, setServices] = useState([]);
 
-  const { searchClicked, setSearchClicked, nameSearch, setNameSearch, selectedSort, setSelectedSort } = useContext(UserContext);
+  const {
+    searchClicked,
+    setSearchClicked,
+    nameSearch,
+    setNameSearch,
+    selectedSort,
+    setSelectedSort,
+    selectedCategories,
+    setSelectedCategories,
+    selectedRatingFilter,
+    setSelectedRatingFilter,
+    undoSearchClicked,
+    setUndoSearchClicked,
+  } = useContext(UserContext);
 
   function handleCard(service) {
-    console.log(service.key);
+    if (!service.verified) {
+      alert(
+        "Esse serviço não possui uma página de perfil pois não é verificado na plataforma."
+      );
+      return;
+    }
     history.push({
       pathname: "/serviceProfile",
       idService: service.key,
     });
   }
 
+  function setDefault() {
+    setSelectedCategories([]);
+    setSelectedRatingFilter({ key: 0, name: "Qualquer" });
+    setNameSearch("");
+    setSelectedSort({ key: "-avgRating", name: "Avaliação geral" });
+  }
   useEffect(() => {
-    if (searchClicked > 0) {
-      console.log(selectedSort)
-      api.post("service/servicesSearch", {
-        name: nameSearch,
-        sort: selectedSort.key,
-        establishment: false
-      })
+    setDefault();
+    console.log("getAllServices");
+    api.post("service/getAllServices", {establishment: false}).then((res) => {
+      if (!res.data.error) {
+        setServices(res.data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (undoSearchClicked) {
+      setDefault();
+      api.post("service/getAllServices", {establishment: false}).then((res) => {
+        if (!res.data.error) {
+          setServices(res.data);
+        }
+      });
+      setUndoSearchClicked(false);
+    }
+  }, [undoSearchClicked]);
+  useEffect(() => {
+    if (searchClicked) {
+      api
+        .post("service/servicesSearch", {
+          name: nameSearch,
+          sort: selectedSort.key,
+          establishment: false,
+          categoryFilter: selectedCategories,
+          ratingFilter: selectedRatingFilter.key,
+        })
         .then((res) => {
           console.log(res);
           if (!res.data.error) {
             console.log(res.data);
             setServices(res.data);
+          } else {
+            alert(
+              "Não encontrei nenhum serviço com esses parâmetros, tente novamente."
+            );
           }
-          else {
-            alert("Não encontrei nenhum serviço com esses parâmetros, tente novamente.")
-          }
-        }) 
-    } else {
-      api.get("service/getAllServices").then((res) => {
-        if (!res.data.error) {
-          setServices(res.data);
-        }
-      });
+        });
+      setSearchClicked(false);
     }
   }, [searchClicked]);
 
@@ -91,13 +134,12 @@ export default function Services({ history }) {
               component="p"
             >
               Utilize o recurso de busca avançada para encontrar um serviço
-              desejado rapidamente.
+              desejado mais rapidamente.
             </Typography>
-            
           </Container>
           <Search />
           <Container className={styles.cardGrid} maxWidth="md">
-            {services.length > 0  ? (
+            {services.length > 0 ? (
               <Grid container spacing={2}>
                 {services.map((service) => (
                   <Grid item key={service._id} xs={12}>
@@ -115,19 +157,24 @@ export default function Services({ history }) {
                             >
                               {service.name}
                             </Typography>
-                            <VerifiedUser
-                              className={styles.iconVerified}
-                            ></VerifiedUser>
-                            <Chip
-                              icon={
-                                <StarRate
-                                  fontSize="large"
-                                  className={styles.star}
+                            {service.verified && (
+                              <React.Fragment>
+                                <VerifiedUser
+                                  className={styles.iconVerified}
+                                ></VerifiedUser>
+
+                                <Chip
+                                  icon={
+                                    <StarRate
+                                      fontSize="large"
+                                      className={styles.star}
+                                    />
+                                  }
+                                  label={service.averageRating}
+                                  className={styles.chip}
                                 />
-                              }
-                              label={service.averageRating}
-                              className={styles.chip}
-                            />
+                              </React.Fragment>
+                            )}
                           </div>
                           <Typography>{service.category.name}</Typography>
                           <div className={styles.teste}>
@@ -145,7 +192,10 @@ export default function Services({ history }) {
                         {service.image ? (
                           <CardMedia
                             className={styles.cardMedia}
-                            src={process.env.REACT_APP_API_IMAGES_URL + service.image}
+                            src={
+                              process.env.REACT_APP_API_IMAGES_URL +
+                              service.image
+                            }
                             component="img"
                             title="Image title"
                           />
@@ -155,7 +205,7 @@ export default function Services({ history }) {
                   </Grid>
                 ))}
               </Grid>
-            ) : (null)}
+            ) : null}
           </Container>
         </Grid>
       </Grid>
@@ -183,37 +233,37 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(8),
   },
   cardMedia: {
-    marginLeft: 'auto',
-    width: 150
+    marginLeft: "auto",
+    width: 150,
   },
   card: {
-    display: 'flex',
+    display: "flex",
   },
   cardContent: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   teste: {
-    display: 'flex'
+    display: "flex",
   },
   chip: {
-    marginLeft: '5px',
-    marginTop: '-3px',
-    backgroundColor: 'white'
+    marginLeft: "5px",
+    marginTop: "-3px",
+    backgroundColor: "white",
   },
   iconVerified: {
-    color: '#11b8ea',
-    marginLeft: '10px'
+    color: "#11b8ea",
+    marginLeft: "10px",
   },
   callSharp: {
-    paddingRight: '5px',
-    color: '#11b8ea'
+    paddingRight: "5px",
+    color: "#11b8ea",
   },
   star: {
-    color: 'yellow',
-    borderRadius: '10px'    
+    color: "yellow",
+    borderRadius: "10px",
   },
   locationOn: {
-    color: '#fd0533',
-    paddingRight: '5px'
-  }
+    color: "#fd0533",
+    paddingRight: "5px",
+  },
 }));
