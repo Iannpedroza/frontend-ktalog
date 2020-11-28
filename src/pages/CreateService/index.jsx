@@ -16,6 +16,7 @@ import { useContext } from 'react';
 
 const steps = ['Tipo do Serviço', 'Detalhes do Serviço', 'Revisar dados'];
 
+
 function getStepContent(step) {
     switch (step) {
         case 0:
@@ -74,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function CreateService() {
+export default function CreateService({history}) {
     const classes = useStyles();
 
     const [activeStep, setActiveStep] = React.useState(0);
@@ -82,6 +83,11 @@ export default function CreateService() {
         productItems, averagePrice, serviceImage
       } = useContext(UserContext)
     
+    if (!navigator.onLine) {
+        alert("É necessário conexão com internet para utilizar esse recurso.");
+        history.push('/home');
+    }
+
     const handleNext = () => {
         if (activeStep === 0 && verificado) {
             let auxCpf = cpf.replace(/[^0-9]/g,''), auxCnpj = cnpj.replace(/[^0-9]/g,'');

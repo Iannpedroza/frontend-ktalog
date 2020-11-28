@@ -60,12 +60,19 @@ export default function Services({ history }) {
   }
   useEffect(() => {
     setDefault();
-    console.log("getAllServices");
-    api.post("service/getAllServices", {establishment: false}).then((res) => {
-      if (!res.data.error) {
-        setServices(res.data);
+    if (!navigator.onLine) {
+      let allServices = JSON.parse(localStorage.getItem('allServices'));
+      if (allServices) {
+        setServices(allServices);
       }
-    });
+    } else {
+      api.post("service/getAllServices", {establishment: false}).then((res) => {
+        if (!res.data.error) {
+          setServices(res.data);
+          localStorage.setItem('allServices', JSON.stringify(res.data));
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -189,7 +196,7 @@ export default function Services({ history }) {
                           </div>
                         </CardContent>
 
-                        {service.image ? (
+                        {service.image && navigator.onLine? (
                           <CardMedia
                             className={styles.cardMedia}
                             src={
