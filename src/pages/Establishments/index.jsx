@@ -61,12 +61,20 @@ export default function Establishments({ history }) {
   }
   useEffect(() => {
     setDefault();
-    console.log("getAllServices");
-    api.post("service/getAllServices", {establishment: true}).then((res) => {
-      if (!res.data.error) {
-        setServices(res.data);
+    if (!navigator.onLine) {
+      let allEstablishments = JSON.parse(localStorage.getItem('allEstablishments'));
+      if (allEstablishments) {
+        setServices(allEstablishments);
       }
-    });
+    } else {
+      api.post("service/getAllServices", {establishment: true}).then((res) => {
+        if (!res.data.error) {
+          setServices(res.data);
+          localStorage.setItem('allEstablishments', JSON.stringify(res.data));
+        }
+      });
+    }
+    
   }, []);
 
   useEffect(() => {
@@ -191,7 +199,7 @@ export default function Establishments({ history }) {
                           </div>
                         </CardContent>
 
-                        {service.image ? (
+                        {service.image && navigator.onLine ? (
                           <CardMedia
                             className={styles.cardMedia}
                             src={

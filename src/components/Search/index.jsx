@@ -286,6 +286,7 @@ export default function Search({ history }) {
                 </ExpansionPanelDetails>
                 <div className={styles.buttons}>
                   <Button
+                    disabled={!navigator.onLine}
                     variant="outlined"
                     color="secondary"
                     onClick={handleUndoAdvancedSearch}
@@ -294,6 +295,7 @@ export default function Search({ history }) {
                     Desfazer busca
                   </Button>
                   <Button
+                    disabled={!navigator.onLine}
                     variant="contained"
                     color="inherit"
                     onClick={handleAdvancedSearch}

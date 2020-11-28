@@ -4,7 +4,7 @@ import { withRouter, useLocation } from 'react-router-dom'
 import logo from '../../assets/simbolo-ktalog.png'
 
 import { Toolbar, Grid, IconButton, Typography, Link, Menu, MenuItem, Button, ListItemIcon, Avatar} from '@material-ui/core'
-import { AccountCircle, ExitToApp, Person, Settings, Add, LocationCity } from '@material-ui/icons'
+import { AccountCircle, ExitToApp, Person, Settings, Add, LocationCity, RateReview } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 import { UserContext } from '../../UserContext'
 
@@ -118,7 +118,7 @@ function NewHeader(props) {
                 </Link>
               </Toolbar>
             )}
-          {logged == "true" ? (
+          {logged == "true" && navigator.onLine? (
             <React.Fragment>
               <IconButton
                 aria-label="account of current user"
@@ -181,6 +181,12 @@ function NewHeader(props) {
                   </ListItemIcon>
                   <Typography>Configurações</Typography>
                 </MenuItem>
+                <MenuItem onClick={handleSettings}>
+                  <ListItemIcon>
+                    <RateReview />
+                  </ListItemIcon>
+                  <Typography>Avalie a plataforma</Typography>
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                   <ListItemIcon>
                     <ExitToApp />
@@ -191,7 +197,7 @@ function NewHeader(props) {
             </React.Fragment>
           ) : location.pathname != '/' && (
             <React.Fragment>
-              <Button variant="outlined" color="default" onClick={handleLogin}>
+              <Button variant="outlined" color="default" onClick={handleLogin} disabled={!navigator.onLine}>
                   Entrar
               </Button>
             </React.Fragment>

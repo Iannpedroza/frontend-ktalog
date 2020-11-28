@@ -50,28 +50,37 @@ export default function Home({ history }) {
   }
 
   useEffect(() => {
-    api.get('service/topServices').then(res => {
-      if (res.data) {
-        const auxData = res.data;
-        let services = []
-        auxData.forEach(service => {
-          service.phone = formatPhone(service.phone);
-          let address = service.address;
-          services.push({
-            name: service.name,
-            key: service._id,
-            rating: service.averageRating,
-            category: service.category.name,
-            phone: service.phone,
-            address: address ? address.street + ", " + address.number + ", " + address.neighborhood : "",
-            image: service.image
-          });
-        });
-        
-        console.log(services)
-        setServices(services);
+    if (!navigator.onLine) {
+      let topServices = JSON.parse(localStorage.getItem('topServices'));
+      if (topServices) {
+        setServices(topServices);
       }
-    })
+    } else {
+      api.get('service/topServices').then(res => {
+        if (res.data) {
+          const auxData = res.data;
+          let services = []
+          auxData.forEach(service => {
+            service.phone = formatPhone(service.phone);
+            let address = service.address;
+            services.push({
+              name: service.name,
+              key: service._id,
+              rating: service.averageRating,
+              category: service.category.name,
+              phone: service.phone,
+              address: address ? address.street + ", " + address.number + ", " + address.neighborhood : "",
+              image: service.image
+            });
+          });
+          
+          console.log(services)
+          localStorage.setItem('topServices', JSON.stringify(services));
+          setServices(services);
+
+        }
+      })
+    }
   }, [])
 
 
@@ -131,7 +140,7 @@ export default function Home({ history }) {
                           </CardContent>
                           
                           {
-                            service.image ? (
+                            service.image && navigator.onLine ? (
                               <CardMedia
                                 className={styles.cardMedia}
                                 src={process.env.REACT_APP_API_IMAGES_URL + service.image} 

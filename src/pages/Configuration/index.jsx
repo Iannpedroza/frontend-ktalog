@@ -63,6 +63,11 @@ export default function Settings({ history }) {
     showConfirmPassword: false,
   });
 
+  if (!navigator.onLine) {
+    alert("É necessário conexão com internet para utilizar esse recurso.");
+    history.push('/home');
+  }
+
   useEffect(() => {
     const initialUserLogged = JSON.parse(
       window.localStorage.getItem("userLogged")
