@@ -370,7 +370,7 @@ function NewHeader(props) {
                 <ListItemIcon>
                   <Person />
                 </ListItemIcon>
-                <Typography>Iann</Typography>
+                <Typography>{initialUserLogged.name}</Typography>
               </MenuItem>
               <MenuItem onClick={handleCreateService}>
                 <ListItemIcon>
