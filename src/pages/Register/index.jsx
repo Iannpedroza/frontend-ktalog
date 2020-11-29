@@ -78,6 +78,7 @@ export default function Register({ history }) {
           .post('users/register', fd)
           .then(response => {
             console.log(response.data);
+            alert("Cadastro realiado com sucesso!");
             history.push('/login')
           })
           .catch(() => {

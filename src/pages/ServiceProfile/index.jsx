@@ -188,7 +188,7 @@ export default function ServiceProfile({ history }) {
     let ratingsFiltered = ratings.filter(
       (obj) =>
         obj.user._id === initialUserLogged.id &&
-        new Date(obj.updatedAt) >= oneWeekBefore
+        new Date(obj.createdAt) >= oneWeekBefore
     );
     console.log(ratingsFiltered);
     if (ratingsFiltered && ratingsFiltered.length > 0) {
@@ -620,7 +620,7 @@ export default function ServiceProfile({ history }) {
                     id="panel1a-header"
                   >
                     <Typography className={styles.heading}>
-                      Meus produtos ({products.length})
+                      Produtos ({products.length})
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
