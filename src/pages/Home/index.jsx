@@ -3,6 +3,7 @@ import { UserContext } from '../../UserContext'
 import api from "../../services/api"
 import Footer from '../../components/Footer'
 import NewHeader from '../../components/NewHeader'
+import Warnings from '../../components/Warnings'
 import {
   Grid, Container, CssBaseline, Typography,Card, CardMedia, CardContent, Chip, CardActionArea
   
@@ -25,6 +26,12 @@ export default function Home({ history }) {
 
 
   function handleCard(service) {
+    if (!navigator.onLine) {
+      alert(
+        "Para utilizar esse recurso é necessário conexão com a internet."
+      );
+      return;
+    }
     console.log(service.key)
     history.push({
       pathname: '/serviceProfile',
@@ -102,6 +109,11 @@ export default function Home({ history }) {
               Esses são os 10 melhores serviços verificados da plataforma neste mês, caso deseje realizar uma busca avançada em outros serviços utilize o menu de navegação acima para navegar entre Serviços e Estabelecimentos. 
             </Typography>   
           </Container>
+          {!navigator.onLine ? (
+            <Warnings/>
+          ) : (
+            null
+          )}
           <Container className={styles.cardGrid} maxWidth="md">
           {services.length !== 0 && (
                 <Grid container spacing={2}>

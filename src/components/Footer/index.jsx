@@ -13,7 +13,7 @@ export default function Footer() {
         <Grid container direction="column" alignItems="center" justify="center">
           <img src={logo} alt="Ktalog" height="50em" />
           <Typography variant="body2" color="inherit" align="center">
-            Made by: Iann Pedroza
+            Criado por: Iann Pedroza
           </Typography>
         </Grid>
       </Container>

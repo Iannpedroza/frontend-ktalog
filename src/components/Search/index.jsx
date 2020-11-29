@@ -36,11 +36,7 @@ import { makeStyles } from "@material-ui/core/styles";
 export default function Search({ history }) {
   const styles = useStyles();
   const location = useLocation();
-  const [fetchData, setFetchData] = useState(false);
-  const [doctors, setDoctors] = useState([]);
-  const [ufs, setUfs] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false);
   
   const sortValues = [
     {
@@ -103,17 +99,6 @@ export default function Search({ history }) {
     selectedRatingFilter, setSelectedRatingFilter,
     undoSearchClicked, setUndoSearchClicked
   } = useContext(UserContext);
-  //localStorage.setItem("price", price)
-
-  //if (parseInt(localStorage.getItem("price")) === 0) {
-  //    alert("Você não pode voltar para essa página novamente. Realize uma nova pesquisa.")
-  //    history.push("/home")
-  // }
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-
   function compare(a, b) {
     // Use toUpperCase() to ignore character casing
     const nameA = a.name.toUpperCase();
@@ -129,56 +114,29 @@ export default function Search({ history }) {
   }
 
   useEffect(() => {
-    api.get("category/").then((res) => {
-      const aux = res.data;
-      if (location.pathname === "/establishments") {
-        var reduced = aux.reduce(function (filtered, option) {
-          if (option.establishment) {
-            filtered.push({name: option.name, id: option._id});
-          }
-          return filtered;
-        }, []);
-      } else if (location.pathname === "/services") {
-        var reduced = aux.reduce(function (filtered, option) {
-          if (!option.establishment) {
-            filtered.push({name: option.name, id: option._id});
-          }
-          return filtered;
-        }, []);
-      }
-      reduced.sort(compare);
-      setCategories(reduced || []);
-    });
-  }, []);
-
-  // Busca os médicos de acordo com a pesquisa na tela inicial
-  /*  useEffect(() => {
-    firebase.db.collection('doctors')
-      .where("location", "==", globalLocation)
-      .where("speciality", "==", globalSpeciality)
-      .get().then(snapshot => {
-        if (snapshot) {
-          let doctors = []
-          snapshot.forEach(doctor => {
-            doctors.push({
-              key: doctor.id,
-              ...doctor.data()
-            })
-          })
-          setDoctors(doctors)
-          setFetchData(true)
+    if (navigator.onLine) {
+      api.get("category/").then((res) => {
+        const aux = res.data;
+        if (location.pathname === "/establishments") {
+          var reduced = aux.reduce(function (filtered, option) {
+            if (option.establishment) {
+              filtered.push({name: option.name, id: option._id});
+            }
+            return filtered;
+          }, []);
+        } else if (location.pathname === "/services") {
+          var reduced = aux.reduce(function (filtered, option) {
+            if (!option.establishment) {
+              filtered.push({name: option.name, id: option._id});
+            }
+            return filtered;
+          }, []);
         }
-      })
-  }, [globalLocation, globalSpeciality]) */
-
-  useEffect(() => {
-    axios
-      .get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-      .then((res) => {
-        //const states = res.data.map(uf => new Object({ 'initial': `${uf.sigla}`, 'name': `${uf.nome}` }))
-        const states = res.data.map((uf) => uf.sigla);
-        setUfs(states);
+        reduced.sort(compare);
+        setCategories(reduced || []);
       });
+    }
+
   }, []);
 
   const handleAdvancedSearch = () => {

@@ -44,6 +44,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Rating from "@material-ui/lab/Rating";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { UserContext } from "../../UserContext";
+import Info from "@material-ui/icons/Info";
 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
@@ -77,6 +78,7 @@ export default function ServiceProfile({ history }) {
   const [costBenefit, setCostBenefit] = useState(0);
   const [attendance, setAttendance] = useState(0);
   const [quality, setQuality] = useState(0);
+  const [products, setProducts] = useState([]);
   const [scheduleItems, setScheduleItems] = useState([]);
   const initialUserLogged = JSON.parse(
     window.localStorage.getItem("userLogged")
@@ -104,56 +106,18 @@ export default function ServiceProfile({ history }) {
           setName(data.name);
           setDescription(data.description);
           setPrice(data.averagePrice);
-          setCategory(data.category.name);
+          setCategory(data.category);
           setRatings(
             data.rating.sort(function (a, b) {
               return new Date(b.createdAt) - new Date(a.createdAt);
-            })
+            }) || []
           );
           setRating(data.averageRating || "Sem avaliação");
           setImage(data.image);
           setScheduleItems(data.schedules || []);
+          setProducts(data.products || []);
         }
       });
-
-    /*firebase.db.collection('doctors').doc(localStorage.getItem('id'))
-      .collection('schedules').where("day", "==", selectedDay)
-      .get()
-      .then(snapshot => {
-        if (snapshot) {
-          let doctorSchedules = []
-          snapshot.forEach(doctorSchedule => {
-            doctorSchedules.push({
-              key: doctorSchedule.id,
-              ...doctorSchedule.data()
-            })
-          })
-          setDoctorSchedules(doctorSchedules)
-
-          doctorSchedules.map(schedule => {
-            return hours = schedule.times
-          })
-
-          
-        }
-
-        firebase.db.collection('ratings')
-          .where("doctorId", "==", localStorage.getItem('id'))
-          .where("commentedBy", "==", "Paciente")
-          .get().then(snapshot => {
-            if (snapshot) {
-              let ratings = []
-              snapshot.forEach(rating => {
-                ratings.push({
-                  key: ratings.id,
-                  ...rating.data()
-                })
-              })
-              setRatings(ratings)
-            }
-          })
-        setFetchData(true)
-      })*/
   }, [history]);
 
   function formatPhone(phone) {
@@ -296,10 +260,6 @@ export default function ServiceProfile({ history }) {
             }
           }
         });
-      //TODO
-      //console.log(document.getElementById('commentaryRating').value);
-      //setReason('');
-      //setCommentaryReport('');
       handleRatingClose();
     } else {
       alert("O campo 'Motivo' é obrigatório");
@@ -532,7 +492,7 @@ export default function ServiceProfile({ history }) {
                     <Typography className={styles.typography} gutterBottom>
                       Categoria:
                     </Typography>
-                    <Typography gutterBottom>{category}</Typography>
+                    <Typography gutterBottom>{category.name}</Typography>
                   </Grid>
                 </Grid>
 
@@ -652,6 +612,51 @@ export default function ServiceProfile({ history }) {
                   </List>
                 </AccordionDetails>
               </Accordion>
+              {category.establishment == true ? (
+                <Accordion fullWidth>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography className={styles.heading}>
+                      Meus produtos ({products.length})
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List className={styles.servicesGrid}>
+                      {products.map((product) => (
+                        <React.Fragment>
+                          <ListItem>
+                            <ListItemAvatar className={styles.listAvatar}>
+                              {product.image ? (
+                                <Avatar
+                                  className={styles.largeAvatar}
+                                  src={
+                                    process.env.REACT_APP_API_IMAGES_URL +
+                                    product.image
+                                  }
+                                />
+                              ) : (
+                                <Avatar>
+                                  <Info />
+                                </Avatar>
+                              )}
+                            </ListItemAvatar>
+                            <Grid className={styles.listItemText}>
+                              <ListItemText
+                                primary={product.name + " - R$" + product.price}
+                                secondary={product.description}
+                              />
+                            </Grid>
+                          </ListItem>
+                          <Divider />
+                        </React.Fragment>
+                      ))}
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
+              ) : null}
             </Grid>
           </main>
         </Grid>
@@ -784,5 +789,19 @@ const useStyles = makeStyles((theme) => ({
   },
   gridTimeLast: {
     marginLeft: "40%",
+  },
+  largeAvatar: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  listItemText: {
+    width: "100%",
+  },
+  servicesGrid: {
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  listAvatar: {
+    marginRight: "25px",
   },
 }));

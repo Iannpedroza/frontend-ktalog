@@ -3,9 +3,9 @@ import React from 'react'
 import { Container, Typography, Grid, Card, CardHeader, CardContent } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
-import undrawPair from '../../assets/undraw_pair_programming_njlp.svg'
-import undrawSchedule from '../../assets/undraw_schedule_pnbk.svg'
-import undrawDoctor from '../../assets/undraw_doctor_kw5l.svg'
+import undrawSearch from '../../assets/undraw_the_search_s0xf.svg'
+import undrawReviews from '../../assets/undraw_reviews_lp8w.svg'
+import undrawCreate from '../../assets/undraw_publish_post_vowb.svg'
 
 export default function Tips() {
   const styles = useStyles();
@@ -14,23 +14,18 @@ export default function Tips() {
     {
       title: 'Procure serviços',
       subDescription: ['Faça uma busca', 'Compare os serviços', 'Escolha o que desejar'],
-      image: `${undrawPair}`
+      image: `${undrawSearch}`
     },
     {
-      title: 'Marque consultas',
-      subDescription: ['Escolha um horário', 'Visualize sua agenda', 'Confirme sua presença'],
-      image: `${undrawSchedule}`
+      title: 'Crie serviços',
+      subDescription: ['Preencha os dados', 'Publique seu serviço', 'Receba feedback dos usuários'],
+      image: `${undrawCreate}`
     },
     {
-      title: 'Seja atendido',
-      subDescription: ['Compareça no local', 'Converse com o médico', 'Avalie com uma nota'],
-      image: `${undrawDoctor}`
+      title: 'Avalie serviços',
+      subDescription: ['Escolha um serviço', 'Preencha o formulário', 'Confirme sua avaliação'],
+      image: `${undrawReviews}`
     },
-    {
-        title: 'Seja atendido',
-        subDescription: ['Compareça no local', 'Converse com o médico', 'Avalie com uma nota'],
-        image: `${undrawDoctor}`
-    }
   ];
 
   return (
@@ -40,13 +35,13 @@ export default function Tips() {
           Como funciona?
                 </Typography>
         <Typography variant="h5" align="center" color="textSecondary" component="p">
-          Ktalog é um espaço para encontrar serviços e criar serviços de sua cidade.
+        Ktalog é um app de buscas de serviços e estabelecimentos em cidades pequenas e do interior, conectando quem procura por informações à quem as disponibiliza, além de permitir a avaliação dos serviços.
                 </Typography>
       </Container>
       <Container className={styles.instructions} maxWidth="md" component="main">
         <Grid container spacing={2} alignItems="flex-end">
           {helpers.map(helper => (
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={4}>
               <Card>
                 <CardHeader
                   title={helper.title}
@@ -55,11 +50,6 @@ export default function Tips() {
                   className={styles.cardHeader}
                 />
                 <CardContent>
-                  {/*<div className={styles.cardContent}>
-                                        <Typography component="h4" variant="h5" color="textPrimary">
-                                            {helper.description}
-                                        </Typography>
-                                    </div>*/}
                   <ul>
                     {helper.subDescription.map(line => (
                       <Typography component="li" color="textSecondary" variant="subtitle1" align="center" key={line}>
@@ -93,13 +83,15 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold'
   },
   container: {
-    padding: theme.spacing(6, 0, 6)
+    padding: theme.spacing(6, 0, 6),
+    backgroundColor: '#e4fdff'
   },
   image: {
     marginTop: theme.spacing(3)
   },
   instructions: {
-    marginBottom: theme.spacing(5)
+    paddingBottom: theme.spacing(5),
+    backgroundColor: '#e4fdff'
   },
   cardContent: {
     display: 'flex',

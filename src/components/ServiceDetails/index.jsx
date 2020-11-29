@@ -141,6 +141,8 @@ export default function ServiceDetails() {
       });
   }, []);
 
+
+
   useEffect(() => {
     api.get("category/").then((res) => {
       const aux = res.data;
@@ -159,6 +161,7 @@ export default function ServiceDetails() {
           return filtered;
         }, []);
       }
+      reduced.sort();
       setCategories(reduced || []);
     });
   }, []);

@@ -16,6 +16,7 @@ import Services from "./pages/Services"
 import serviceProfile from "./pages/ServiceProfile"
 import Configuration from './pages/Configuration'
 import Establishments from './pages/Establishments'
+import HowItWorks from './pages/HowItWorks';
 
 
 function App() {
@@ -69,6 +70,7 @@ function App() {
           <Route path="/configuration" component={Configuration} />
           <Route path="/services" component={Services} />
           <Route path="/establishments" component={Establishments} />
+          <Route path="/tips" component={HowItWorks} />
         </UserContext.Provider>
       </Switch>
       

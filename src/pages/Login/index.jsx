@@ -162,10 +162,10 @@ export default function Login({ history }) {
                 Entrar
           				</Button>  
                     
-                  <FacebookLogin
+                  {/* <FacebookLogin
                     appId="2343581862614110"
                     autoLoad={false}
-                    callback={responseFacebook} />
+                    callback={responseFacebook} /> */}
                 
               <Grid container justify="center">
                 <Grid item>
