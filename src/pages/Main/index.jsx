@@ -29,7 +29,7 @@ export default function Main(props) {
       ...state,
       [name]: event.target.value,
     });
-    props.history.push('/home');
+    props.history.push('/home'); //TODO
   };
 
   return (
@@ -68,7 +68,6 @@ export default function Main(props) {
                       >
                         <option aria-label="None" value="" />
                         <option value={10}>Caeté</option>
-                        <option value={20}>Belo Horizonte</option>
                       </Select>
                   </FormControl>
                   </Grid>

@@ -65,41 +65,47 @@ export default function Settings({ history }) {
 
   if (!navigator.onLine) {
     alert("É necessário conexão com internet para utilizar esse recurso.");
-    history.push('/home');
+    history.push("/home");
   }
 
   useEffect(() => {
     const initialUserLogged = JSON.parse(
       window.localStorage.getItem("userLogged")
     );
-    api.post("users/getById", {
-        id: userLogged.id || initialUserLogged.id,
-      })
-      .then((res) => {
-        console.log(res);
-        if (!res.data.error) {
-          setName(res.data.first_name);
-          setLastName(res.data.last_name);
-          //setAvatar(res.data.avatar)
-          setEmail(res.data.email);
-          setOldObject({
-            name: res.data.first_name,
-            lastName: res.data.last_name,
-            //avatar: res.data.avatar,
-            email: res.data.email,
-          });
-        }
-      });
+    if (!initialUserLogged || !initialUserLogged.id) {
+      alert("É necessário estar logado para utilizar esse recurso.");
+      history.push("/home");
+    } else {
+      api
+        .post("users/getById", {
+          id: userLogged.id || initialUserLogged.id,
+        })
+        .then((res) => {
+          console.log(res);
+          if (!res.data.error) {
+            setName(res.data.first_name);
+            setLastName(res.data.last_name);
+            //setAvatar(res.data.avatar)
+            setEmail(res.data.email);
+            setOldObject({
+              name: res.data.first_name,
+              lastName: res.data.last_name,
+              //avatar: res.data.avatar,
+              email: res.data.email,
+            });
+          }
+        });
 
-    api
-      .post("service/getByUserId", {
-        userId: userLogged.id || initialUserLogged.id,
-      })
-      .then((res) => {
-        if (!res.data.error) {
-          setMyServices(res.data);
-        }
-      });
+      api
+        .post("service/getByUserId", {
+          userId: userLogged.id || initialUserLogged.id,
+        })
+        .then((res) => {
+          if (!res.data.error) {
+            setMyServices(res.data);
+          }
+        });
+    }
   }, []);
 
   const handleChange = (prop) => (event) => {
@@ -110,14 +116,18 @@ export default function Settings({ history }) {
 
   function removeService(service) {
     const serviceId = service._id;
-    api.post('service/delete', {serviceId: serviceId})
-      .then(res => {
-        if (!res.data.error) {
-          alert("Serviço deletado com sucesso");
-          let auxServices = myServices.slice();
-          setMyServices(auxServices.splice(auxServices.findIndex(el => el._id == serviceId), 1));
-        }
-      });
+    api.post("service/delete", { serviceId: serviceId }).then((res) => {
+      if (!res.data.error) {
+        alert("Serviço deletado com sucesso");
+        let auxServices = myServices.slice();
+        setMyServices(
+          auxServices.splice(
+            auxServices.findIndex((el) => el._id == serviceId),
+            1
+          )
+        );
+      }
+    });
   }
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
@@ -150,7 +160,6 @@ export default function Settings({ history }) {
         window.localStorage.setItem("logged", "false");
         window.localStorage.removeItem("userLogged");
         history.push("/home");
-        
       }
     });
     handleCloseDelete();
@@ -467,7 +476,9 @@ export default function Settings({ history }) {
                               <IconButton onClick={() => editService()}>
                                 <EditIcon className={styles.editButton} />
                               </IconButton>
-                              <IconButton onClick={() => removeService(service)}>
+                              <IconButton
+                                onClick={() => removeService(service)}
+                              >
                                 <DeleteForeverIcon
                                   className={styles.deleteButton}
                                 />

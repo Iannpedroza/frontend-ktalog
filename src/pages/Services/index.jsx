@@ -19,6 +19,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CallSharp from "@material-ui/icons/CallSharp";
 import LocationOn from "@material-ui/icons/LocationOn";
 import StarRate from "@material-ui/icons/Star";
+import Warnings from '../../components/Warnings'
 import VerifiedUser from "@material-ui/icons/VerifiedUser";
 export default function Services({ history }) {
   const styles = useStyles();
@@ -46,9 +47,16 @@ export default function Services({ history }) {
       );
       return;
     }
+    if (!navigator.onLine) {
+      alert(
+        "Para utilizar esse recurso é necessário conexão com a internet."
+      );
+      return;
+    }
+    console.log(service);
     history.push({
       pathname: "/serviceProfile",
-      idService: service.key,
+      idService: service._id,
     });
   }
 
@@ -145,6 +153,11 @@ export default function Services({ history }) {
             </Typography>
           </Container>
           <Search />
+          {!navigator.onLine ? (
+            <Warnings/>
+          ) : (
+            null
+          )}
           <Container className={styles.cardGrid} maxWidth="md">
             {services.length > 0 ? (
               <Grid container spacing={2}>
@@ -216,6 +229,7 @@ export default function Services({ history }) {
           </Container>
         </Grid>
       </Grid>
+      <Footer/>
     </React.Fragment>
   );
 }

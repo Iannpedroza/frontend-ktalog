@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { UserContext } from '../../UserContext'
 import ServiceTypeInformation from '../../components/ServiceTypeInformation'
 import api from "../../services/api"
+import Footer from "../../components/Footer";
 import { serialize } from 'object-to-formdata';
 import ServiceDetails from '../../components/ServiceDetails'
 
@@ -85,6 +86,11 @@ export default function CreateService({history}) {
     
     if (!navigator.onLine) {
         alert("É necessário conexão com internet para utilizar esse recurso.");
+        history.push('/home');
+    }
+    const initialUserLogged = JSON.parse(window.localStorage.getItem('userLogged'));
+    if (!initialUserLogged || !initialUserLogged.id) {
+        alert("É necessário estar logado para utilizar esse recurso.");
         history.push('/home');
     }
 
@@ -270,6 +276,7 @@ export default function CreateService({history}) {
                     </Paper>
                 </main>
             </Grid>
+            <Footer/>
         </React.Fragment>
     );
   }

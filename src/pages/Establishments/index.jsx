@@ -3,6 +3,7 @@ import Footer from "../../components/Footer";
 import { UserContext } from "../../UserContext";
 import Search from "../../components/Search";
 import NewHeader from "../../components/NewHeader";
+import Warnings from '../../components/Warnings'
 import api from "../../services/api";
 import {
   Grid,
@@ -47,9 +48,15 @@ export default function Establishments({ history }) {
       );
       return;
     }
+    if (!navigator.onLine) {
+      alert(
+        "Para utilizar esse recurso é necessário conexão com a internet."
+      );
+      return;
+    }
     history.push({
       pathname: "/serviceProfile",
-      idService: service.key,
+      idService: service._id,
     });
   }
 
@@ -148,6 +155,11 @@ export default function Establishments({ history }) {
             </Typography>
           </Container>
           <Search />
+          {!navigator.onLine ? (
+            <Warnings/>
+          ) : (
+            null
+          )}
           <Container className={styles.cardGrid} maxWidth="md">
             {services.length > 0 ? (
               <Grid container spacing={2}>
@@ -219,6 +231,7 @@ export default function Establishments({ history }) {
           </Container>
         </Grid>
       </Grid>
+      <Footer/>
     </React.Fragment>
   );
 }
