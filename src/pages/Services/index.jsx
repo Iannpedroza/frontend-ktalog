@@ -94,6 +94,21 @@ export default function Services({ history }) {
       setUndoSearchClicked(false);
     }
   }, [undoSearchClicked]);
+
+  function compare(a, b) {
+    // Use toUpperCase() to ignore character casing
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+
+    let comparison = 0;
+    if (nameA > nameB) {
+      comparison = 1;
+    } else if (nameA < nameB) {
+      comparison = -1;
+    }
+    return comparison;
+  }
+  
   useEffect(() => {
     if (searchClicked) {
       api
@@ -108,7 +123,11 @@ export default function Services({ history }) {
           console.log(res);
           if (!res.data.error) {
             console.log(res.data);
-            setServices(res.data);
+            let arrayAux = res.data;
+            if (selectedSort.key == "+name") {
+              arrayAux.sort(compare);
+            }
+            setServices(arrayAux);
           } else {
             alert(
               "Não encontrei nenhum serviço com esses parâmetros, tente novamente."
