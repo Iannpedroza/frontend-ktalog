@@ -364,7 +364,7 @@ export default function ServiceProfile({ history }) {
               </Box>
 
               <Box component="fieldset" mb={3} borderColor="transparent">
-                <Typography component="legend">Localização</Typography>
+                <Typography component="legend">Atendimento</Typography>
                 <Rating
                   size="large"
                   value={attendance}
